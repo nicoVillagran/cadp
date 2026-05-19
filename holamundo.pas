@@ -1,17 +1,5 @@
-
-program holamundo;
-type
-	puntero = ^integer; 
-var
-	num:puntero;
+program HolaMundo;
 begin
-	new(num);
-	
-
-	writeln('ingrese un numero: ');
-	readln(num^);
-
-	writeln(num^);
-
-	//writeln('el numero ingresado es: ', num);
+  writeln('¡Todo listo y funcionando!');
+  readln;
 end.

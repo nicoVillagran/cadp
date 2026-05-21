@@ -1,0 +1,54 @@
+Alumno 1
+Nro de Inscripción: 101
+
+DNI: 44226688 (¡Ojo! Este es 100% par)
+
+Apellido: Gomez
+
+Nombre: Juan
+
+Año de nacimiento: 2001
+--------------------
+Alumno 2
+Nro de Inscripción: 102
+
+DNI: 45137911 (Tiene impares)
+
+Apellido: Perez
+
+Nombre: Maria
+
+Año de nacimiento: 1995 (Debería ser el 1° más viejo)
+-------------------------
+Alumno 3
+Nro de Inscripción: 103
+
+DNI: 24680246 (¡Ojo! Este también es 100% par)
+
+Apellido: Lopez
+
+Nombre: Carlos
+
+Año de nacimiento: 2002
+--------------------------
+Alumno 4
+Nro de Inscripción: 104
+
+DNI: 33445566 (Tiene impares)
+
+Apellido: Rodriguez
+
+Nombre: Ana
+
+Año de nacimiento: 1998 (Debería ser el 2° más viejo)
+--------------------------------
+Alumno 5
+Nro de Inscripción: 105
+
+DNI: 41234567 (Tiene impares)
+
+Apellido: Alvarez
+
+Nombre: Luis
+
+Año de nacimiento: 2000

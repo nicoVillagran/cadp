@@ -1,6 +1,6 @@
 {
   Utilizando el programa del ejercicio 1, modificar el módulo armarNodo para que los elementos de la
-  lista queden ordenados de manera ascendente (menor a mayor) (insertar ordenado).
+  lista queden ordenados de manera ascendente (menor a mayor) (insertar ordenado). ✅
 
   10, 21, 5, 8, 3, 12, 0
 }
@@ -12,35 +12,35 @@ type
     num : integer;
     sig : lista;
   end;
-procedure insertarOrdenado(var L: lista; v: integer); 
+procedure insertarOrdenado(var pri: lista; num: integer); 
   var
     act, ant, nuevo: lista;
   begin
     new(nuevo);
-    nuevo^.num := v;
+    nuevo^.num := num;
     nuevo^.sig := nil;
     
-    ant := nil;
-    act := L;
 
-    if L = nil then L := nuevo
-    else
-      begin
-        while (act <> nil) and (act^.num < v) do
-          begin
-            ant := act;
-            act := act^.sig;
-          end;
+    if pri = nil then pri := nuevo
+    else begin
+      act:=pri;
+      ant:=pri;
 
-        if act = nil then begin
-          nuevo^.sig := act;
-          ant^.sig := nuevo;
-        end
-        else begin
-          nuevo^.sig := act;
-          ant^.sig := nuevo;
+      while (act <> nil) and (act^.num < num) do
+        begin
+          ant := act;
+          act := act^.sig;
         end;
+
+      if act = pri then begin
+        nuevo^.sig := pri;
+        pri := nuevo;
+      end
+      else begin
+        nuevo^.sig := act;
+        ant^.sig := nuevo;
       end;
+    end;
   end;
 
 procedure imprimirLista(pri: lista);

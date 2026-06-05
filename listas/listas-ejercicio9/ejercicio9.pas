@@ -3,7 +3,7 @@
     a. EstáOrdenada: recibe la lista como parámetro y retorna true si la misma se encuentra ordenada, o
     false en caso contrario.✅
     b. Eliminar: recibe como parámetros la lista y un valor entero, y elimina dicho valor de la lista (si
-    existe). Nota: la lista podría no estar ordenada. ✅
+    existe). Nota: la lista podría no estar ordenada. ✅    
     c. Sublista: recibe como parámetros la lista L y dos valores enteros A y B, y retorna una nueva lista
     con todos los elementos de la lista L mayores que A y menores que B. ✅
     d. Modifique el módulo Sublista del inciso anterior, suponiendo que la lista L se encuentra ordenada
@@ -46,8 +46,8 @@ function estaOrdenada(pri: lista): boolean; // esta funcion asume una lista orde
   begin
     res := true; {asumimos que la lista esta ordenada}
     aux := pri;
-    while (aux <> nil) and (res) do begin
-      if (aux^.num > aux^.sig^.num) then begin
+    while (aux^.sig <> nil) and (res) do begin
+      if (aux^.num > aux^.sig^.num) then begin // es mayor al siguiente, no esta ordenada
         res := false;
       end;
       aux := aux^.sig;
@@ -55,7 +55,7 @@ function estaOrdenada(pri: lista): boolean; // esta funcion asume una lista orde
 
     estaOrdenada := res;
   end;
-procedure eliminar(var pri: lista; valor: integer);
+procedure eliminar(var pri: lista; valor: integer; var res: boolean);
   var
     aux, ant: lista;
   begin
@@ -71,9 +71,10 @@ procedure eliminar(var pri: lista; valor: integer);
         ant^.sig := aux^.sig;
       end;
       dispose(aux);
-    end;
+      res := true;
+    end else res := false;
   end;
-procedure eliminarOrdenado(var pri: lista; valor: integer);
+procedure eliminarOrdenado(var pri: lista; valor: integer; var res: boolean);
   var
     aux, ant: lista;
   begin
@@ -82,6 +83,7 @@ procedure eliminarOrdenado(var pri: lista; valor: integer);
       ant := aux;
       aux := aux^.sig;
     end;
+
     if (aux <> nil) and (aux^.num = valor) then begin {encontre el valor}
       if (aux = pri) then begin {el valor a eliminar es el primero}
         pri := aux^.sig;
@@ -89,7 +91,8 @@ procedure eliminarOrdenado(var pri: lista; valor: integer);
         ant^.sig := aux^.sig;
       end;
       dispose(aux);
-    end;
+      res:=true;
+    end else res:=False;
   end;
 procedure insertarOrdenado(var pri: lista; num: integer); 
   var
@@ -167,17 +170,77 @@ function sublistaOrdenadaDesc(pri: lista; A, B: integer): lista;
 
 
 var
-  pri : lista;
-  valor : integer;
+  pri, sub: lista;
+  valor, a, b: integer;
+  encontrado: boolean;
 begin
   pri := nil;
   writeln('Ingrese un numero:');
   read(valor);
   while (valor <> 0) do begin
-    armarNodo(pri, valor);
+    insertarOrdenado(pri, valor);
     writeln('Ingrese un numero:');
     read(valor);
   end;
-  { imprimir lista }
-  imprimirLista(pri);
+  
+  if (pri <> nil) then begin
+    { imprimir lista }
+    writeln('------------- lista -----------------');
+    imprimirLista(pri);
+    //prueba de modulo "estaOrdenada"
+  if (estaOrdenada(pri)) then begin
+    writeln('La lista esta ordenada');
+    // prueba de modulo "eliminar ordenado"
+    // writeln('Ingrese un numero a eliminar:');
+    // read(valor);
+    // eliminarOrdenado(pri, valor, encontrado);
+    // if(encontrado) then begin
+    //   writeln('-------------- nueva lista ----------------');
+    //   imprimirLista(pri);
+    // end
+    // else begin
+    //   writeln('No se elimino ningun valor, valor "', valor, '" no encontrado');
+    // end;
+
+    // prueba de modulo "sublista ordenada"
+    writeln('Ingrese un numero A:');
+    read(a);
+    writeln('Ingrese un numero B:');
+    read(b);
+    sub := sublistaOrdenada(pri, a, b); { Usar el valor leído para A y B }
+    if(sub <> nil) then begin
+      writeln('-------------- sublista ----------------');
+      imprimirLista(sub);
+    end
+    else begin
+      writeln('No se encontraron elementos mayores a A y menores a B en la lista');
+    end;
+
+  end
+  else begin
+    writeln('La lista no esta ordenada');
+    // prueba de modulo "eliminar"
+    // writeln('Ingrese un numero a eliminar:');
+    // read(valor);
+    // eliminar(pri, valor, encontrado);
+    
+    // prueba de modulo "sublista"
+    writeln('Ingrese un numero A:');
+    read(a);
+    writeln('Ingrese un numero B:');
+    read(b);
+    sub := sublista(pri, a, b); { Usar el valor leído para A y B }
+    if(sub <> nil) then begin
+      writeln('-------------- sublista ----------------');
+      imprimirLista(sub);
+    end
+    else begin
+      writeln('No se encontraron elementos mayores a A y menores a B en la lista');
+    end;
+  end;
+  end
+  else writeln('La lista esta vacia');
+  
+
+  {lista de prueba de 5 numeros ramdom: 1, 2, 3, 25, 30}
 end.

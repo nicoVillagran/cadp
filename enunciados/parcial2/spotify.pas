@@ -177,9 +177,9 @@ procedure encontrar2Maximos(arr: arrGeneros; var indiceMax1, indiceMax2: subrang
       end;
     end;
   end;
-procedure sumaDigitos (num: integer; var pares, impares: integer);
+function sumaDigitos (num: integer) : boolean;
   var
-    dig: integer;
+    pares, impares, dig: integer;
   begin
     pares := 0;
     impares := 0;
@@ -193,15 +193,16 @@ procedure sumaDigitos (num: integer; var pares, impares: integer);
         impares := impares + dig;
       num := num div 10;
     end;
+    sumaDigitos := pares = impares;
   end;
 procedure cantArtistasPop(genero, reproducciones: integer; var contador: integer);
   var
-    pares, impares: integer;
+    res: boolean;
   begin
     if genero = 2 then // Pop
     begin
-      sumaDigitos(reproducciones, pares, impares);
-      if pares = impares then
+      res := sumaDigitos(reproducciones);
+      if res then
         contador := contador + 1;
     end;
   end;
@@ -250,10 +251,31 @@ procedure generarListaVerificados(art: artistaInfo; var verificados: listaArtist
 procedure recorrerLista(pri: listaArtistas; arr: arrGeneros; var contadorPop, totalArtistas: integer; var verificados: listaArtistas);
   var
     aux : listaArtistas;
+    indiceMax1, indiceMax2: subrangoGenero;
+    porcentajePop: real;
   begin
     aux := pri;
     while (aux <> nil) do begin
-      
-      aux := aux^.sig;
+      // contar total de artistas
+      totalArtistas := totalArtistas + 1;
+
+      // en cada iteración se realizan las acciones para cada artista
+      if(aux^.artista.verificado) then contadorGenero(arr, aux^.artista.genero);
+
+      // artista Pop, calcular porcentaje
+      cantArtistasPop(aux^.artista.genero, aux^.artista.reproducciones, contadorPop);
+
+      // generar lista de verificados con menos de 1 millón de reproducciones
+      generarListaVerificados(aux^.artista, verificados);
     end;
+
+    // encontrar los 2 géneros con más artistas verificados
+    encontrar2Maximos(arr, indiceMax1, indiceMax2);
+    writeln('Los dos géneros con más artistas verificados son: ', arrGeneros[indiceMax1], ' y ', arrGeneros[indiceMax2]);
+
+    // calcular porcentaje de artistas Pop con suma de dígitos pares igual a suma de dígitos impares
+    porcentajePop := calcularPorcentaje(contadorPop, totalArtistas);
+    writeln('El porcentaje de artistas Pop con suma de dígitos pares igual a suma de dígitos impares es: ', porcentajePop:0:2, '%');
+
+    //
   end;

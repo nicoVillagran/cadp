@@ -7,12 +7,9 @@
     servicio.
     Se pide:
       a. Generar una nueva estructura con código de reserva y precio total de
-      cada reserva. Esta estructura debe generarse ordenada de manera
-      descendente por el código de reserva de turno. ✅
-      b. Informar los dos días del mes con mayor cantidad de reservas de
-      clientes con DNI que contenga al menos 3 dígitos impares.✅
-      c. Realizar un módulo que reciba la estructura generada en a. y retorne el
-      promedio de precio total que están pagando los clientes en noviembre de 2025.
+      cada reserva. Esta estructura debe generarse ordenada de manera descendente por el código de reserva de turno. ✅
+      b. Informar los dos días del mes con mayor cantidad de reservas de clientes con DNI que contenga al menos 3 dígitos impares. ✅
+      c. Realizar un módulo que reciba la estructura generada en a. y retorne el promedio de precio total que están pagando los clientes en noviembre de 2025.
   )
 
   Se dispone:
@@ -100,14 +97,14 @@ program autos;
 // Tipos
 const
  dimFPrecios = 5;
- dimFDias = 30;
+ dimFDias = 15;
 type
   precios = array [1..dimFPrecios] of real;
   dias = array [1..dimFDias] of integer;
   reserva = record
     codigo: integer;
     dni: integer;
-    dia: 1..30;
+    dia: 1..dimFDias;
     horaInicio: 7..19;
     horaFin: 7..19;
     tipoServicio: 1..5;
@@ -133,7 +130,8 @@ function precioTotal(horaFin, horaInicio: integer; precio: real): real;
   var
   horas: integer;
   begin
-    horas:=horaFin - horaInicio;
+    if(horaFin = horaInicio) then horas:=1
+    else horas:=horaFin - horaInicio;
     precioTotal:=horas * precio;
   end;
 procedure cargarRegistro(var r: nuevaEstructura; codigo: integer; precio:real);
@@ -141,7 +139,7 @@ procedure cargarRegistro(var r: nuevaEstructura; codigo: integer; precio:real);
     r.codigo:= codigo;
     r.precioTotal:= precio;
   end;
-procedure insertarOrdenadoDescendente(pri: nuevaLista; dato: nuevaEstructura);
+procedure insertarOrdenadoDescendente(var pri: nuevaLista; dato: nuevaEstructura);
   var
     nuevo, act, ant: nuevaLista;
   begin
@@ -151,7 +149,7 @@ procedure insertarOrdenadoDescendente(pri: nuevaLista; dato: nuevaEstructura);
     act:=pri;
     ant:=pri;
 
-    while(act <> nil) and (dato.codigo > act^.dato.codigo) do begin
+    while(act <> nil) and (dato.codigo < act^.elem.codigo) do begin
       ant:=act;
       act:=act^.sig;
     end;
@@ -193,15 +191,18 @@ procedure encontrar2Maximos (v: dias; var max1, max2: integer);
   begin
     max1:=1;
     max2:=1;
+    WriteLn(v[1]);
     for i:=2 to dimFDias do begin
+    WriteLn(v[i]);
       if(v[i] >= v[max1]) then begin
         max2:=max1;
         max1:=i;
       end
       else
-        if (v[i] > v[max2]) then max2:=i;
+        if (v[i] >= v[max2]) then max2:=i;
     end;
   end;
+
 // accion C
 function promedioPreciosTotales (pri:nuevaLista):real;
   var
@@ -213,7 +214,7 @@ function promedioPreciosTotales (pri:nuevaLista):real;
 
     while pri <> nil do begin
       cant:=cant + 1;
-      total:=total + pri^.elem;
+      total:=total + pri^.elem.precioTotal;
 
       pri:=pri^.sig;
     end;
@@ -221,38 +222,106 @@ function promedioPreciosTotales (pri:nuevaLista):real;
     promedioPreciosTotales := total / cant;
   end;
 // generales
-procedure recorrerLista (L: lista; var nuevL: nuevaLista);
+procedure recorrerLista (L: lista; v: precios; var nuevL: nuevaLista);
   var
     max1, max2: integer;
     vDias: dias;
     precio, promedioPago: real;
     dato: nuevaEstructura;
   begin
+    inicializarVector(vDias);
     while (L <> nil) do begin
-      precio:=precioTotal(l^.elem.horaInicio, L^.elem.horaFin, v[L^.elem.tipoServicio]);
+      precio:=precioTotal(l^.elem.horaFin, L^.elem.horaInicio, v[L^.elem.tipoServicio]);
       cargarRegistro(dato, L^.elem.codigo, precio);
       insertarOrdenadoDescendente(nuevL, dato);
 
-      inicializarVector(vDias);
       if (digImpares(L^.elem.dni)) then cargarVector(vDias, L^.elem.dia);
 
       L:=L^.sig;
     end;
 
     encontrar2Maximos(vDias, max1, max2);
-
-    writeln('Los dos dias del mes con mayor cantidad de reservas de clientes con DNI que contenga al menos 3 dígitos impares son: ', max1, ' y ', max2);
+    WriteLn('dia con mas reservas: ', max1);
+    WriteLn('2do dia con mas reservas: ', max2);
 
     promedioPago:=promedioPreciosTotales(nuevL);
     writeln('El promedio de precio total que están pagando los clientes en noviembre de 2025 es: ', promedioPago:0:2);
   end;
 
+procedure cargarVectorPrecios(var v: precios);
+  begin
+    v[1]:=10;
+    v[2]:=20;
+    v[3]:=30;
+    v[4]:=40;
+    v[5]:=50;
+  end;
+procedure leerUnRegistro(var r: reserva);
+  begin
+    writeln('Ingrese el codigo de reserva: ');
+    readln(r.codigo);
+    if (r.codigo <> -1) then begin
+      writeln('Ingrese el DNI del cliente: ');
+      readln(r.dni);
+      writeln('Ingrese el dia del servicio (1..30): ');
+      readln(r.dia);
+      writeln('Ingrese la hora de inicio (7..19): ');
+      readln(r.horaInicio);
+      writeln('Ingrese la hora de fin (7..19): ');
+      readln(r.horaFin);
+      writeln('Ingrese el tipo de servicio (1..5): ');
+      readln(r.tipoServicio);
+    end;
+  end;
+procedure cargarLista(var L: lista);
+  var
+    r: reserva;
+    nuevo: lista;
+  begin
+    L:=nil;
+
+    writeln('Ingrese los datos de las reservas. Para finalizar ingrese el codigo de reserva "-1".');
+
+    leerUnRegistro(r);
+
+    while (r.codigo <> -1) do begin
+      New(nuevo);
+      nuevo^.elem:= r;
+      nuevo^.sig:=L;
+      L:= nuevo;
+
+      leerUnRegistro(r);
+    end;
+  end;
+
 var
   L: lista;
   nuevaL: nuevaLista;
+  vPrecios: precios;
 begin
+  nuevaL := nil;
   cargarLista(L);
-  recorrerLista(L, nuevaL);
+  cargarVectorPrecios(vPrecios);
+  recorrerLista(L, vPrecios, nuevaL);
 end.
-{lPreciosTotales: nuevaLista;
-  l: lista;}
+
+{
+  - precioTotal. ✅
+  - cargarLista ✅
+  - cargarRegistro ✅
+  - insertarOrdenadoDescendente. ✅
+  - encontrar2Maximos ✅
+  - digImpares ✅
+  - cargarVectorPrecios ✅
+  - promedioPreciosTotales.
+  - recorrerLista.
+
+  ---------------------
+  1. 105, 135,  5,  8, 10, 2 | 2*20 = 40
+
+  2. 320, 246, 12, 14, 17, 1 | 3*10 = 30
+  
+  3. 215, 111,  5,  9, 10, 4 | 1*40 = 40
+  
+  4. 440, 975, 12,  10, 12, 3 | 2*30 = 60
+}

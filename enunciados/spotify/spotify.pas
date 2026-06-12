@@ -21,7 +21,7 @@ type
   artista = record
     nombre: string;
     genero: 1..dimFGeneros;
-    resproducciones: integer;
+    resproducciones: int64;
     verificado: boolean;
   end;
 
@@ -118,7 +118,7 @@ procedure recorrerLista (L: lista; var nuevaL: lista; vGeneros: generos);
         if(res)then cantRepro := cantRepro + 1;
       end;
 
-      if(L^.elem.verificado) and (L^.elem.resproducciones < 10) then agregarNodo(nuevaL, L^.elem);
+      if(L^.elem.verificado) and (L^.elem.resproducciones < 1000000) then agregarNodo(nuevaL, L^.elem);
 
       L:=L^.sig;
     end;
@@ -149,9 +149,9 @@ procedure cargarVGeneros(var v: generos);
     v[3]:='Rock';
     v[4]:='Folklore';
     v[5]:='Cumbia';
-    v[5]:='Cuarteto';
-    v[5]:='Tango';
-    v[5]:='Electrónica';
+    v[6]:='Cuarteto';
+    v[7]:='Tango';
+    v[8]:='Electrónica';
   end;
 procedure leerUnRegistro(var r: artista);
   var res: string;
@@ -201,16 +201,16 @@ End.
 
 {
   datos de prueba:
-  1. art1, 3,  500000,  si
+  1. art1, 3,  500.000,  si
 
-  2. art2, 3, 2500000,  si
+  2. art2, 3, 2.500.000,  si
 
-  3. art3, 2,    1357,  si
+  3. art3, 2,    1357,  si 
 
   4. art4, 2,    2433,  no
 
-  5. art5, 8, 3000000,  si
+  5. art5, 8, 3.000.000,  si
 
-  6. art6, 5,  150000,  si
+  6. art6, 5,  150.000,  si
   
 }

@@ -92,13 +92,14 @@ procedure agregarNodo (var pri: lista; dato: artista);
     pri := nuevo;
   end;
 // general
-procedure recorrerLista (L: lista; var nuevaL: lista);
+procedure recorrerLista (L: lista; var nuevaL: lista; vGeneros: generos);
   var
     max1, max2: integer;
     cantPop, cantRepro: integer;
     porcentaje: real;
     res: Boolean;
     v: generosMax;
+    aux: lista;
   begin
     cantPop:=0;
     cantRepro:=0;
@@ -118,6 +119,72 @@ procedure recorrerLista (L: lista; var nuevaL: lista);
       end;
 
       if(L^.elem.verificado) and (L^.elem.resproducciones < 10) then agregarNodo(nuevaL, L^.elem);
+
+      L:=L^.sig;
+    end;
+
+    encontrar2Max(v, max1, max2);
+    WriteLn('el genero con mas artistas verificados: ', max1);
+    WriteLn('2do genero con mas artistas verificados: ', max2);
+
+    porcentaje:=calPorcentaje(cantPop, cantRepro);
+    writeln('Hay ',  cantPop, ', de los cuales, el ', porcentaje:0:2, '% cumple las condiciones.');
+
+    writeln('artistas verificados con menos de 1millon de reproducciones:');
+    aux:=nuevaL;
+    
+    if(aux = nil) then WriteLn('Lista vacia')
+    else begin
+      while aux <> nil do begin
+        writeln(aux^.elem.nombre);
+        aux := aux^.sig;
+      end;
+    end;
+  end;
+// agregados para que corra el programa
+procedure cargarVGeneros(var v: generos);
+  begin
+    v[1]:='Funk';
+    v[2]:='Pop';
+    v[3]:='Rock';
+    v[4]:='Folklore';
+    v[5]:='Cumbia';
+    v[5]:='Cuarteto';
+    v[5]:='Tango';
+    v[5]:='Electrónica';
+  end;
+procedure leerUnRegistro(var r: artista);
+  var res: string;
+  begin
+    writeln('nombre: ');
+    readln(r.nombre);
+    if (r.nombre <> 'no') then begin
+      writeln('genero: ');
+      readln(r.genero);
+      writeln('reproducciones: ');
+      readln(r.resproducciones);
+      writeln('verificado (si/no): ');
+      readln(res);
+      r.verificado := (res = 'si');
+    end;
+  end;
+procedure cargarLista(var L: lista);
+  var
+    r: artista;
+    nuevo: lista;
+  begin
+    L:=nil;
+
+    WriteLn('ingres info del artista: ');
+    leerUnRegistro(r);
+
+    while (r.nombre <> 'no') do begin
+      New(nuevo);
+      nuevo^.elem:= r;
+      nuevo^.sig:=L;
+      L:= nuevo;
+
+      leerUnRegistro(r);
     end;
   end;
 
@@ -126,8 +193,24 @@ Var
   L, nuevaL: lista; // "L" se dispone
   vGeneros: generos; // se dispone
 Begin
-   // cargarVGeneros(vGeneros) // se dispone
-  // cargarLista(L) // se dispone
+   cargarVGeneros(vGeneros); // se dispone
+   cargarLista(L); // se dispone
 
-  recorrerLista(L, nuevaL);
+  recorrerLista(L, nuevaL, vGeneros);
 End.
+
+{
+  datos de prueba:
+  1. art1, 3,  500000,  si
+
+  2. art2, 3, 2500000,  si
+
+  3. art3, 2,    1357,  si
+
+  4. art4, 2,    2433,  no
+
+  5. art5, 8, 3000000,  si
+
+  6. art6, 5,  150000,  si
+  
+}
